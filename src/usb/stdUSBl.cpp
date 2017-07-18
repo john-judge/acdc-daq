@@ -13,8 +13,10 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <iostream>
+#include <fstream>
 #include "stdUSB.h"
-
+using namespace std;
 stdUSB::stdUSB(void) {
   stdUSB::stdHandle = INVALID_HANDLE_VALUE;
   //printf("stdUSB initiated\n");
@@ -156,9 +158,9 @@ bool stdUSB::sendData(unsigned int data)// throw(...)
     return FAILED;
   /* Open a file to print out the final, sent packet */
   ofstream ofile;
-  ofile.open("sendlog.txt", ios::app);
-  ofile << "Data in " << endl;
-  ofile << data << endl << endl;
+  ofile.open("log/sendlog.txt", ios::app);
+  ofile << "Command: ";
+  ofile << "0x" << hex << data << endl;
   /* Shifted right because send value needs to be in
   HEX base. char[4] ^= int (char -> 1byte, int -> 4 bytes)
   */
@@ -167,9 +169,6 @@ bool stdUSB::sendData(unsigned int data)// throw(...)
   buff[1] = (data >> 8);
   buff[2] = (data >> 16);
   buff[3] = (data >> 24);
-
-  ofile << "buffer out" << endl;
-  ofile << buff << endl << endl;
   ofile.close();
   /*  USBFX2_EP_WRITE => end point addr.
   buff => bytes to send
@@ -206,7 +205,7 @@ bool stdUSB::readData(unsigned short * pData, int l, int* lread)// throw(...)
     return FAILED;
   }
   ofstream ofile;
-  ofile.open("readlog.txt", ios::app);
+  ofile.open("log/readlog.txt", ios::app);
 
   int buff_sz = l*sizeof(unsigned short);
   //char* buff = new char[110];
@@ -219,7 +218,7 @@ bool stdUSB::readData(unsigned short * pData, int l, int* lread)// throw(...)
   int retval = usb_bulk_read(stdHandle, USBFX2_EP_READ, (char*)pData, buff_sz, USB_TOUT_MS);
   //    int retval = usb_bulk_read(stdHandle, USBFX2_EP_READ, (char*)pData, buff_sz, 0);
 
-  ofile << "read" << retval << "bytes" << endl;
+  ofile << "read " << retval << " bytes" << endl;
   ofile << "input" << endl << pData << endl << endl;
   ofile.close();
   if (retval > 0) {
