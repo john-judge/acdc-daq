@@ -18,7 +18,7 @@ EXE=	bin/logData \
 	bin/readCC   bin/readACDC bin/Reset \
 	bin/calEn    bin/resetDll bin/setConfig \
 	bin/dumpData bin/oScope   bin/usbResetDevice \
-	bin/makeLUT
+	bin/makeLUT unlog
 #############################################################################
 OBJS= 	obj/stdUSBl.o obj/stdUSBl_Slave.o\
 		obj/SuMo.o \
@@ -61,6 +61,8 @@ bin/oScope	: obj/oScope.o  	$(OBJS); $(CC) $^ $(LDFLAGS) -o $@
 bin/makeLUT	: obj/makeLUT.o  	$(OBJS); $(CC) $^ $(LDFLAGS) -o $@
 bin/usbResetDevice:
 	g++ -o bin/usbResetDevice src/usb/usbResetDevice.C
+unlog :
+	rm -f log.txt
 #############################################################################
 clean:
 	@ rm -f $(OBJS) *~ *.o src/*~ include/*~ src/functions/*~ -rf obj/
